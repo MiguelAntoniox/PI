@@ -1,4 +1,4 @@
-import requests # habilitando uso do requests
+import requests# habilitando uso do requests
 
 
 def main():
