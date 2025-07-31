@@ -26,7 +26,7 @@ class Moedas:
             return float(cotacao) # retorna o valor da funcao usando numero flutuante
         
         except Exception as qualerro:   # except identifica um erro # Exception é a classe que nos diz qual erro ocorreu # as qual erro armazena esse erro dentro da variavel qual erro
-            print("Ocorreu um erro: " , qualerro)
+            print("Ocorreu um erro na puxagem dos dados: " , qualerro)
             return None  
         
     
@@ -45,7 +45,7 @@ class Moedas:
     
         
         except Exception as qualerro:
-            print("Ocorreu um erro: " , qualerro)
+            print("Ocorreu um erro na puxagem dos dados: " , qualerro)
             return None
         
     def cotacao_yuan(self):
@@ -61,7 +61,7 @@ class Moedas:
             return float(cotacao)
         
         except Exception as qualerro:
-            print("Ocorreu um erro: " , qualerro)
+            print("Ocorreu um erro na puxagem dos dados: " , qualerro)
             return None
         
         
