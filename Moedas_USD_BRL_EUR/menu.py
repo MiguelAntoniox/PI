@@ -11,6 +11,9 @@ def menu():
     print(f"Obtendo cotação atual do Euro : {moeda.cotacao_euro()}")
     print(f"Obtendo cotação atual do Yuan : {moeda.cotacao_yuan()}")
 
+
+
+
      
         
         

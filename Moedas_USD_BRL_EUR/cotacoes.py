@@ -1,4 +1,4 @@
-import requests# habilitando uso do requests
+import requests    # habilitando uso do requests
 
  
    
@@ -32,7 +32,7 @@ class Moedas:
         url = "https://economia.awesomeapi.com.br/last/EUR-BRL"
         
         try :
-            resposta = requests.get(url) """ 22 """
+            resposta = requests.get(url) ''' repete o mesmo sistema de cima so mudou a moeda que a api ta puxando '''
             resposta.raise_for_status()
             dados = resposta.json()
             cotacao = dados["EURBRL"]["bid"]    
@@ -49,7 +49,7 @@ class Moedas:
         url = "https://economia.awesomeapi.com.br/last/CNY-BRL" 
         
         try:
-            resposta = requests.get(url)
+            resposta = requests.get(url)  ''' repete o mesmo sistema de cima so mudou a moeda que a api ta puxando '''
             resposta.raise_for_status()
             dados = resposta.json()
             cotacao = dados["CNYBRL"]["bid"]
