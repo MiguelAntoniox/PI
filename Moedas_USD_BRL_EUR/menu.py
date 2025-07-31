@@ -5,11 +5,27 @@ moeda = Moedas("Moeda")
 
 def menu():
     
+    print("Escolha uma opção do sistema:	")
+    print("1 - Cotação das moedas")
+    print("2 - Sair")
     
     
-    print(f"Obtendo cotação atual do Dolar : {moeda.cotacao_dolar()}")
-    print(f"Obtendo cotação atual do Euro : {moeda.cotacao_euro()}")
-    print(f"Obtendo cotação atual do Yuan : {moeda.cotacao_yuan()}")
+    escolha = input("Escolha uma opção:  ")
+    
+    
+    if escolha == "1":
+        print(f"Obtendo cotação atual do Dolar : {moeda.cotacao_dolar()}")
+        print(f"Obtendo cotação atual do Euro : {moeda.cotacao_euro()}")
+        print(f"Obtendo cotação atual do Yuan : {moeda.cotacao_yuan()}")
+       
+    if escolha == "2":
+            pass
+
+    
+    
+    
+    
+    
 
 
 

@@ -2,17 +2,20 @@ import requests    # habilitando uso do requests
 
  
    
-
+""" esse  modulo esta puxando dados de moedas USD, EUR, CNY  de uma api """
 
 
 class Moedas:
+    """atributos da classe moedas"""
     
     def __init__(self, tipomoeda):
         self.tipomoeda = tipomoeda
         
-    
+    """metodos da classe moedas"""
 
     def cotacao_dolar(self): # criando uma função
+        """esse metodo esta recebendo os dados selecionados atraves de uma API e retornando o valor atual da moeda"""
+        
         url = "https://economia.awesomeapi.com.br/last/USD-BRL" # variavel url recebe o link da APi 
 
         try: # serve para caso o codigo aq dentro der erro, ele mostrar uma mensagem pra esse erro ao usuario usando o EXCEPT
@@ -28,11 +31,12 @@ class Moedas:
         
     
     def cotacao_euro(self):
+        """esse metodo esta recebendo os dados selecionados atraves de uma API e retornando o valor atual da moeda"""
         
         url = "https://economia.awesomeapi.com.br/last/EUR-BRL"
         
         try :
-            resposta = requests.get(url) ''' repete o mesmo sistema de cima so mudou a moeda que a api ta puxando '''
+            resposta = requests.get(url)     
             resposta.raise_for_status()
             dados = resposta.json()
             cotacao = dados["EURBRL"]["bid"]    
@@ -45,11 +49,12 @@ class Moedas:
             return None
         
     def cotacao_yuan(self):
+        """esse metodo esta recebendo os dados selecionados atraves de uma API e retornando o valor atual da moeda"""
         
         url = "https://economia.awesomeapi.com.br/last/CNY-BRL" 
         
         try:
-            resposta = requests.get(url)  ''' repete o mesmo sistema de cima so mudou a moeda que a api ta puxando '''
+            resposta = requests.get(url)       
             resposta.raise_for_status()
             dados = resposta.json()
             cotacao = dados["CNYBRL"]["bid"]
