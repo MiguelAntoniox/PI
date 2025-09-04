@@ -1,26 +1,32 @@
 from cotacoes import Moedas
+import tkinter as tk
+from tkinter import messagebox
 
 
-moeda = Moedas("Moeda")
+class Menu:
+    def __init__(self):
+        self.janelamenu = tk.Tk()
+        self.janelamenu.title("Menu STOP.LO")
+        self.janelamenu.geometry("1200x800")
+        self.janelamenu.configure(bg="black")
+        moeda = Moedas("Moeda")
+        
+        tk.Label(self.janelamenu, text= "PAINEL DE DECISÂO DO INVESTIDOR" , bg= "#8A2BE2", font= "Roboto", padx=80).grid(row=0, column=1, padx=11, pady=5)
+        tk.Label(self.janelamenu, text= f"Cotaçao Dolar: {moeda.cotacao_dolar()} ", bg= "#8A2BE2", font= "Roboto", padx=80).grid(row=1, column=0, padx=11, pady=5)
+        tk.Label(self.janelamenu, text= f"Cotação Euro: {moeda.cotacao_euro()} ", bg= "#8A2BE2", font= "Roboto", padx=80).grid(row=1, column=1, padx=11, pady=5)
+        tk.Label(self.janelamenu, text= f"Cotação Yuan: {moeda.cotacao_yuan()}", bg= "#8A2BE2", font= "Roboto", padx=80, ).grid(row=1, column=2, padx=11, pady=5)
+        
+        
 
-def menu():
-    
-    print("Escolha uma opção do sistema:	")
-    print("1 - Cotação das moedas")
-    print("2 - Sair")
-    
-    
-    escolha = input("Escolha uma opção:  ")
-    
-    
-    if escolha == "1":
-        print(f"Obtendo cotação atual do Dolar : {moeda.cotacao_dolar()}")
-        print(f"Obtendo cotação atual do Euro : {moeda.cotacao_euro()}")
-        print(f"Obtendo cotação atual do Yuan : {moeda.cotacao_yuan()}")
-       
-    if escolha == "2":
-            pass
 
+            
+    def iniciar(self):
+        self.janelamenu.mainloop()
+
+
+if __name__ == "__main__":
+    app = Menu()
+    app.iniciar()        
     
     
     
@@ -32,6 +38,3 @@ def menu():
 
      
         
-        
-if __name__ == "__main__": ## tem que usar essa merda aq por algum motivo pra rodar
-        menu()        
