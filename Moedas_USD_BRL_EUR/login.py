@@ -87,10 +87,6 @@ class Login:
                       
                                     
             
-        
-            
-            
-            
             
             
     def iniciar(self):
