@@ -10,31 +10,38 @@ class Login:
     def __init__(self):
         self.janela = tk.Tk()
         self.janela.title("Login STOP.LO")
-        self.janela.geometry("1200x800")
-        self.janela.configure(bg = "black")
+        self.janela.geometry("500x800")
+        self.janela.configure(bg = "white")
         self.tentativas = 0
         
         """" pra por o gif na tela"""
         
-        caminho_imagem = os.path.join(os.path.dirname(__file__), "money-1156.gif")
+        caminho_imagem = os.path.join(os.path.dirname(__file__), "logo.png")
         if os.path.exists(caminho_imagem):
             imagem_pil = Image.open(caminho_imagem).resize((200,200), Image.Resampling.LANCZOS) 
             self.imagem = ImageTk.PhotoImage(imagem_pil)
             label_imagem = tk.Label(self.janela, image= self.imagem, bg= "gray")
             label_imagem.pack(pady=(20,10))
             
-        """"criando os labeis escritos, campos de entrada e botoes"""    
-        tk.Label(self.janela, text= "Usuario: ", bg= "#8A2BE2", font= "Roboto", padx=200).pack(pady=(20, 10))
-        self.campo_usuario= tk.Entry(self.janela,width=65, highlightthickness= 15,highlightbackground= "#8A2BE2")
+        """"criando os labeis escritos, campos de entrada e botoes"""  
+        
+        framao = tk.Frame(self.janela, bg= "white")
+        framao.pack(pady=10)
+          
+        tk.Label(self.janela, text= "Usuario ", bg= "white", font= ("Roboto",16,"bold"), padx=50).pack(pady=(20, 10))
+        self.campo_usuario= tk.Entry(self.janela,width=65, highlightthickness= 15,highlightbackground= "white")
         self.campo_usuario.pack(padx=50)
         
         
-        tk.Label(self.janela, text= "Senha: ", bg= "#8A2BE2", font= "Roboto",padx=200).pack(pady=(20, 10))
-        self.campo_senha= tk.Entry(self.janela, width=65,highlightthickness= 15,highlightbackground= "#8A2BE2")
+        tk.Label(self.janela, text= "Senha ", bg= "white", font= ("Roboto",16,"bold"),padx=50).pack(pady=(20, 10))
+        self.campo_senha= tk.Entry(self.janela, width=65,highlightthickness= 15,highlightbackground= "white")
         self.campo_senha.pack(padx=50)
         
-        botao_entrar = tk.Button(self.janela, text= "Entrar", command=self.validar_login, bg = "#8A2BE2", font= "Roboto", padx=200)
+        botao_entrar = tk.Button(self.janela, text= "Entrar", command=self.validar_login, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
         botao_entrar.pack(pady=30)
+        
+        botao_cadastrar = tk.Button(self.janela, text= "Cadastrar", command=self.validar_login, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
+        botao_cadastrar.pack(pady=30)
         
         
         
@@ -73,9 +80,10 @@ class Login:
             
             
             
-            self.janela.destroy
-            app = Menu()
-            app.iniciar()
+           self.janela.withdraw()
+           app = Menu()
+           app.iniciar() 
+           
             
         else:
             self.tentativas += 1
