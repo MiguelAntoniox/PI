@@ -25,6 +25,8 @@ class Login:
             
         """"criando os labeis escritos, campos de entrada e botoes"""  
         
+    
+        
         framao = tk.Frame(self.janela, bg= "white")
         framao.pack(pady=10)
           
@@ -44,6 +46,13 @@ class Login:
         botao_cadastrar.pack(pady=30)
         
         
+     
+     
+    def icone(self):
+        
+        caminho = os.path.join(os.path.dirname(__file__), "ico.ico")
+        if os.path.exists(caminho):
+            self.janela.iconbitmap(caminho) 
         
     def validar_login(self):
         usuario = self.campo_usuario.get().strip()
