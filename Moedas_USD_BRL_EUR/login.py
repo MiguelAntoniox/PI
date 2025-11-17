@@ -36,7 +36,7 @@ class Login:
         
         
         tk.Label(self.janela, text= "Senha ", bg= "white", font= ("Roboto",16,"bold"),padx=50).pack(pady=(20, 10))
-        self.campo_senha= tk.Entry(self.janela, width=65,highlightthickness= 15,highlightbackground= "white")
+        self.campo_senha= tk.Entry(self.janela, width=65,highlightthickness= 15,highlightbackground= "white", show="$")
         self.campo_senha.pack(padx=50)
         
         botao_entrar = tk.Button(self.janela, text= "Entrar", command=self.validar_login, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
@@ -85,7 +85,7 @@ class Login:
             else:
                 messagebox.showerror("prencha o campo") 
             return
-        if usuario == "admin" and senha == "12345":
+        if usuario == "admin" and senha == "123":
             
             
             
@@ -100,7 +100,7 @@ class Login:
                 messagebox.showerror("errou as tentativas")  
                 self.tentativas = 0
             else:
-                messagebox.showerror("persistir é burrice")
+                messagebox.showerror("Erro", "Usuario ou senha invalidos")
                       
                                     
             
