@@ -2,8 +2,8 @@ import bcrypt
 import mysql.connector
 from mysql.connector import Error
 
-
 class BancoPI():
+    
     def __init__(self):
         
         conex = mysql.connector.connect(
@@ -44,7 +44,17 @@ class BancoPI():
             self.criar_indices()
         except Error as e:
             print(f"Erro ao conectar o MySql: {e}")
+    
             raise
+        
+    def salva_cotacoes(self):
+        self.cursor.execute(""" 
+            CREATE TABLE IF NOT EXISTS salva_cotacao(
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                usuario_id INT NOT NULL,
+                data_cotacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE)""")
+        self.conexao.commit()   
         
     def criar_usuarios(self):
         self.cursor.execute("""
@@ -100,7 +110,6 @@ class BancoPI():
 
         grupo_id = grupo[0]
 
-       
         self.cursor.execute(
             "SELECT * FROM usuario_grupo WHERE usuario_id = %s AND grupo_id = %s",
             (usuario_id, grupo_id)
@@ -116,7 +125,6 @@ class BancoPI():
 
     def salvar_usuario(self, usuario, senha, perfil='usuário', grupo_nome=None):
 
-        
         self.cursor.execute("SELECT * FROM usuarios WHERE usuario = %s", (usuario,))
         if self.cursor.fetchone():
             raise ValueError("Usuário já existe.")
@@ -176,7 +184,6 @@ class BancoPI():
         self.cursor.execute(query, (usuario,))
         return [row[0] for row in self.cursor.fetchall()]
     
-
 
     def atualizar_usuario(self, usuario_antigo, novo_usuario, nova_senha=None, novo_perfil='usuário', grupos=None):
         if usuario_antigo != novo_usuario:
