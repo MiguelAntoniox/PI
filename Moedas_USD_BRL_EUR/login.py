@@ -3,6 +3,9 @@ from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import messagebox
 from menu import Menu
+from bancoPI import BancoPI
+from tkinter import *
+from PIL import Image, ImageTk
 
 """"classe que constroi a janela"""
 
@@ -13,6 +16,7 @@ class Login:
         self.janela.geometry("500x800")
         self.janela.configure(bg = "white")
         self.tentativas = 0
+        self.bancoPI = BancoPI()
         
         """" pra por o gif na tela"""
         
@@ -26,7 +30,6 @@ class Login:
         """"criando os labeis escritos, campos de entrada e botoes"""  
         
     
-        
         framao = tk.Frame(self.janela, bg= "white")
         framao.pack(pady=10)
           
@@ -39,14 +42,13 @@ class Login:
         self.campo_senha= tk.Entry(self.janela, width=65,highlightthickness= 15,highlightbackground= "white", show="$")
         self.campo_senha.pack(padx=50)
         
-        botao_entrar = tk.Button(self.janela, text= "Entrar", command=self.validar_login, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
+        botao_entrar = tk.Button(self.janela, text= "Entrar", command=self.validarlogin, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
         botao_entrar.pack(pady=30)
         
-        botao_cadastrar = tk.Button(self.janela, text= "Cadastrar", command=self.validar_login, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
+        botao_cadastrar = tk.Button(self.janela, text= "Cadastrar", command=self.tela_cadastro, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
         botao_cadastrar.pack(pady=30)
         
         
-     
      
     def icone(self):
         
@@ -54,56 +56,125 @@ class Login:
         if os.path.exists(caminho):
             self.janela.iconbitmap(caminho) 
         
-    def validar_login(self):
+    def validarlogin(self):
+        
         usuario = self.campo_usuario.get().strip()
-        senha =  self.campo_senha.get().strip()
-        
-        
+        senha = self.campo_senha.get().strip()
+       
+    
         if not usuario and not senha:
-            self.tentativas += 1
-            if self.tentativas >= 3:
-                messagebox.showerror("dados tentados invalidos", "Tente dados validos")
-                self.tentativas = 0
-            else:
-                messagebox.showerror("Erro", "Prencha os campos")
-                
+            self.erro_login("preencha todos os campos")
             return
         elif not usuario:
-            self.tentativas += 1
-            if self.tentativas >= 3:
-                messagebox.showerror("Usuario errado")
-                self.tentativas = 0
-            else:
-                messagebox.showerror("prencha o campo")
+            self.erro_login("preencha o usuario")
+            return
+        elif not senha: 
+            self.erro_login("preencha a senha")
             return
         
-        elif not senha:
-            self.tentativas += 1
-            if self.tentativas >= 3:
-                messagebox.showerror("senha errada ")
-                self.tentativas = 0
-            else:
-                messagebox.showerror("prencha o campo") 
-            return
-        if usuario == "admin" and senha == "123":
+        if self.bancoPI.validar_credenciais(usuario,senha):
+            self.bancoPI.registrar_login(usuario)
+            self.janela.withdraw()
+            menu = Menu()
             
             
-            
-           self.janela.withdraw()
-           app = Menu()
-           app.iniciar() 
-           
-            
+
         else:
-            self.tentativas += 1
-            if self.tentativas >=3:
-                messagebox.showerror("errou as tentativas")  
-                self.tentativas = 0
-            else:
-                messagebox.showerror("Erro", "Usuario ou senha invalidos")
-                      
-                                    
+            self.erro_login("Usuario ou senha errados")
             
+            
+    def erro_login(self, mensagem):
+        self.tentativas += 1
+        if self.tentativas >= 3:
+            messagebox.showerror("Erro","a tentativa esta incorreta")
+            self.tentativas= 0
+        else:
+            messagebox.showerror("Erro", mensagem)        
+                      
+    def tela_cadastro(self):
+        
+        cadastro = Toplevel(self.janela)
+        cadastro.title("Cadastro de usuario")
+        cadastro.geometry("500x800")
+        cadastro.configure(bg = "white")
+        
+        caminho = os.path.join(os.path.dirname(__file__), "ico.ico")
+        if os.path.exists(caminho):
+            self.janela.iconbitmap(caminho)
+            
+        Label(cadastro, text= "Usuario ", bg= "white", font= ("Roboto",16,"bold"), padx=50).pack(pady=(20, 10))
+        login_novousuario = Entry(cadastro,width=65, highlightthickness= 15,highlightbackground= "white")
+        login_novousuario.pack(padx=20)
+    
+        Label(cadastro, text= "Senha:", bg= "white", font= ("Roboto",16,"bold"), padx=50).pack(pady=(20, 10))
+        senha_novousuario = Entry(cadastro,width=65,highlightthickness= 15,highlightbackground= "white", show="$")
+        senha_novousuario.pack(padx=20)
+        
+        def salvar_usuario():
+             novousuario =  login_novousuario.get()
+             novasenha = senha_novousuario.get()
+             
+             if not novousuario or not novasenha:
+                 messagebox.showerror("erro", "Preencha usuario ou senha", parent = cadastro)
+                 return
+             
+             def validarusuario(usuario):
+                 tem_arroba = "@" in usuario
+                 tem_br = usuario.endswith(".com.br")
+                 if not tem_arroba or not tem_br:
+                     return False, "Usuario precisa ter @ e .com "   
+                 return True, ""
+             
+             def validarsenha(senha):
+                 if len(senha) < 8:
+                     return False, "a senha tem que ter mais de 8 caracteres" 
+                 
+                 tem_maiuscula = False
+                 for caractere in senha:
+                     if caractere.isupper():
+                         tem_maiuscula = True
+                         break
+                 if not tem_maiuscula:
+                     return False, "A senha deve ter pelo menos uma letra maiúscula."
+                 
+                 tem_numero = False
+                 for caractere in senha:
+                     if caractere.isdigit():
+                         tem_numero = True
+                         break
+                 if not tem_numero:
+                     return False, "A senha deve ter pelo menos um número."
+                 
+                 caracteres_especiais = "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~"
+                 tem_especial = False
+                 for caractere in senha:
+                     if caractere in caracteres_especiais:
+                         tem_especial = True
+                         break
+                 if not tem_especial:
+                     return False, "A senha deve ter pelo menos um caractere especial."
+                 
+                 return True, ""
+
+             valido, mensagem = validarusuario(novousuario)
+             if not valido:
+                messagebox.showerror("Erro", mensagem, parent=cadastro)
+                return
+
+             valido, mensagem = validarsenha(novasenha)
+             if not valido:
+                messagebox.showerror("Erro", mensagem, parent=cadastro)
+                return
+            
+             try:
+                self.bancoPI.salvar_usuario(novousuario, novasenha)
+                messagebox.showinfo("Sucesso", f"Usuario '{novousuario}' cadastrado com sucesso!")
+                cadastro.destroy()
+             except ValueError as e:
+                messagebox.showerror("Erro", str(e), parent=cadastro)                               
+        
+        botao = Button(cadastro, text="Salvar", command=salvar_usuario, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white" )
+        botao.pack(padx=20)    
             
             
     def iniciar(self):

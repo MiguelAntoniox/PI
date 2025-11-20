@@ -9,7 +9,7 @@ class BancoPI():
         conex = mysql.connector.connect(
             host="127.0.0.1",
             user = "root",
-            password=""
+            password="057213"
         )
         
         cursor = conex.cursor()
@@ -21,7 +21,7 @@ class BancoPI():
             conex = mysql.connector.connect(
                 host = "127.0.0.1",
                 user = "root",
-                password=""
+                password="057213"
             ) 
             cursor = conex.cursor()
             cursor.execute('CREATE DATABASE banco_PI')
@@ -32,7 +32,7 @@ class BancoPI():
             self.conexao = mysql.connector.connect(
                 host= 'localhost',
                 user = 'root',
-                password='',
+                password='057213',
                 database = 'banco_PI'
             )
             self.cursor = self.conexao.cursor()
@@ -42,6 +42,8 @@ class BancoPI():
             self.criar_grupos_padrao()
             self.usuario_admin()
             self.criar_indices()
+            self._criar_tabela_testes()
+            self._criar_tabela_defeitos()
         except Error as e:
             print(f"Erro ao conectar o MySql: {e}")
     
@@ -92,6 +94,53 @@ class BancoPI():
         setores = ["Usuario", "Administrador"]
         for grupo in setores :
             self.adicionar_grupo(grupo)
+            
+            
+    def _criar_tabela_testes(self):
+       
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS testes_sistema (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                data_hora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                funcao_testada VARCHAR(255) NOT NULL,
+                tipo_teste VARCHAR(50) NOT NULL,
+                caso_teste VARCHAR(255) NOT NULL,
+                entrada TEXT,
+                resultado_esperado TEXT,
+                resultado_obtido TEXT,
+                status VARCHAR(20),
+                observacoes TEXT
+            )
+        """)
+        self.conexao.commit()   
+        
+    def _criar_tabela_defeitos(self):
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS defeitos (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                modulo VARCHAR(100),
+                descricao VARCHAR(255),
+                data_ocorrencia DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        self.conexao.commit()    
+        
+        
+    def registrar_defeito(self, modulo, descricao):
+        self.cursor.execute("""
+            INSERT INTO defeitos (modulo, descricao) VALUES (%s, %s)
+        """, (modulo, descricao))
+        self.conexao.commit() 
+        
+    def registrar_teste(self, funcao, tipo, caso, entrada, esperado, obtido, status, observacoes=""):
+        self.cursor.execute("""
+            INSERT INTO testes_sistema
+            (funcao_testada, tipo_teste, caso_teste, entrada, resultado_esperado, resultado_obtido, status, observacoes)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (funcao, tipo, caso, entrada, esperado, obtido, status, observacoes))
+        self.conexao.commit()    
+                 
+            
             
     def adicionar_grupo(self, nome_grupo):
         try:
@@ -152,6 +201,64 @@ class BancoPI():
             senha_hash = resultado[0]
             return bcrypt.checkpw(senha.encode(), senha_hash.encode())
         return False
+    
+    
+    def verificar_integridade(self):
+    
+        tabelas_necessarias = [
+            "usuarios", "logins", "permissoes", "usuario_grupo", "testes_sistema", "defeitos"
+        ]
+        
+        self.cursor.execute("SHOW TABLES")
+        existentes = [t[0] for t in self.cursor.fetchall()]
+        faltando = [t for t in tabelas_necessarias if t not in existentes]
+        
+        if faltando:
+            status = "FALHA"
+            resultado = f"Tabelas faltando: {', '.join(faltando)}"
+            self.registrar_defeito("BancoMySQL", resultado)
+        else:
+            status = "SUCESSO"
+            resultado = "Todas as tabelas essenciais estão presentes."
+        
+        self.registrar_teste(
+            funcao="verificar_integridade",
+            tipo="Estático",
+            caso="Verificação da estrutura inicial do banco",
+            entrada="Inicialização do sistema",
+            esperado="Todas as tabelas presentes",
+            obtido=resultado,
+            status=status,
+            observacoes="Teste automático ao iniciar o sistema"
+        )
+        
+        self.cursor.execute("SELECT COUNT(*) FROM usuarios WHERE usuario = 'admin'")
+        tem_admin = self.cursor.fetchone()[0] > 0
+        
+        if not tem_admin:
+            self.registrar_defeito("BancoMySQL", "Usuário admin não encontrado na inicialização.")
+            self.registrar_teste(
+                funcao="usuario_admin",
+                tipo="Estático",
+                caso="Criação automática do usuário admin",
+                entrada="Banco inicializado",
+                esperado="Usuário admin existente",
+                obtido="Usuário admin ausente",
+                status="FALHA",
+                observacoes="Recriar o admin automaticamente"
+            )
+            self.usuario_admin() 
+        else:
+            self.registrar_teste(
+                funcao="usuario_admin",
+                tipo="Estático",
+                caso="Verificação de existência do admin",
+                entrada="Banco inicializado",
+                esperado="Usuário admin existente",
+                obtido="Usuário admin presente",
+                status="SUCESSO")
+    
+    
 
     def registrar_login(self, usuario):
         self.cursor.execute("SELECT id FROM usuarios WHERE usuario = %s", (usuario,))

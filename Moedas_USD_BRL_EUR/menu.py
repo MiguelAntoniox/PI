@@ -1,5 +1,5 @@
 from cotacoes import Moedas
-from stocks import Stocks
+# from stocks import Stocks
 import tkinter as tk
 from tkinter import messagebox
 
