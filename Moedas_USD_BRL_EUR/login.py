@@ -2,7 +2,7 @@ import os
 from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import messagebox
-from menu import Menu
+from menu import Menu_Principal as Menu
 from bancoPI import BancoPI
 from tkinter import *
 from PIL import Image, ImageTk
@@ -11,7 +11,7 @@ from PIL import Image, ImageTk
 
 class Login:
     def __init__(self):
-        self.janela = tk.Tk()
+        self.janela = tk.Tk()   
         self.janela.title("Login STOP.LO")
         self.janela.geometry("500x800")
         self.janela.configure(bg = "white")
@@ -76,7 +76,7 @@ class Login:
             self.bancoPI.registrar_login(usuario)
             self.janela.withdraw()
             menu = Menu()
-            
+            menu.iniciar()
             
 
         else:

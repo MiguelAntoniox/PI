@@ -4,9 +4,9 @@ import tkinter as tk
 from tkinter import messagebox
 
 
-class Menu:
+class Menu_Principal:
     def __init__(self):
-        self.janelamenu = tk.Toplevel()
+        self.janelamenu = tk.Tk()
         self.janelamenu.title("Menu STOP.LO")
         self.janelamenu.geometry("1500x800")
         self.janelamenu.configure(bg="white")
@@ -21,13 +21,15 @@ class Menu:
         
     
 
-            
+      
     def iniciar(self):
-        self.janelamenu.mainloop()
-
+         self.janelamenu.mainloop()
+         
+    def start(self):
+        self.iniciar()
 
 if __name__ == "__main__":
-    app = Menu()
+    app = Menu_Principal()
     app.iniciar()        
     
     
