@@ -8,11 +8,13 @@ import tkinter as tk
 class Stocks:
     """atributos da classe moedas"""
     
-    def __init__(self, tipoacao):
-        self.tipoacaoa = tipoacao
+    def __init__(self):
+       
+        self.janelaacoes = tk.Toplevel()
+        self.janelaacoes.title("Stocks STOP.LO")
+        self.janelaacoes.geometry("400x300")
+        self.janelaacoes.configure(bg = "white")
         
-        
-    """metodos da classe stocks"""
 
     def cotacao_ativos(self): # criando uma função
         """esse metodo esta recebendo os dados selecionados atraves de uma API e retornando o valor atual da moeda"""
@@ -31,7 +33,8 @@ class Stocks:
             return None  
         
     
-
+    def iniciar(self):
+         self.janelaacoes.mainloop()
         
         
         
