@@ -2,10 +2,11 @@ import os
 from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import messagebox
-from menu import Menu_Principal as Menu
+from menu import Menu_Principal 
 from bancoPI import BancoPI
 from tkinter import *
 from PIL import Image, ImageTk
+from estilo import Estilos
 
 """"classe que constroi a janela"""
 
@@ -17,6 +18,8 @@ class Login:
         self.janela.configure(bg = "white")
         self.tentativas = 0
         self.bancoPI = BancoPI()
+        self.icone()
+        self.Estilos = Estilos()
         
         """" pra por o gif na tela"""
         
@@ -33,7 +36,7 @@ class Login:
         framao = tk.Frame(self.janela, bg= "white")
         framao.pack(pady=10)
           
-        tk.Label(self.janela, text= "Usuario ", bg= "white", font= ("Roboto",16,"bold"), padx=50).pack(pady=(20, 10))
+        tk.Label(self.janela, text= "Usuario ", bg = self.Estilos.cores["fundo"] ).pack(pady=(20, 10))
         self.campo_usuario= tk.Entry(self.janela,width=65, highlightthickness= 15,highlightbackground= "white")
         self.campo_usuario.pack(padx=50)
         
@@ -52,7 +55,7 @@ class Login:
      
     def icone(self):
         
-        caminho = os.path.join(os.path.dirname(__file__), "ico.ico")
+        caminho = os.path.join(os.path.dirname(__file__), "money.ico")
         if os.path.exists(caminho):
             self.janela.iconbitmap(caminho) 
         
@@ -75,7 +78,7 @@ class Login:
         if self.bancoPI.validar_credenciais(usuario,senha):
             self.bancoPI.registrar_login(usuario)
             self.janela.withdraw()
-            menu = Menu()
+            menu = Menu_Principal()
             menu.iniciar()
             
 
