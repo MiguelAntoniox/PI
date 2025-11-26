@@ -62,4 +62,9 @@ class Menu_Principal:
 
 if __name__ == "__main__":
     app = Menu_Principal()
+    app.iniciar()        
+
+
+if __name__ == "__main__":
+    app = Menu_Principal()
     app.iniciar() 
