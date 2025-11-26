@@ -7,10 +7,17 @@ import tkinter as tk
 
 class Etf:
     """atributos da classe moedas"""
-    
-    def __init__(self, tipoacao):
-        self.tipoacaoa = tipoacao
+   
+    def __init__(self):
+        # self.tipoacaoa = tipoacao
         self.janelaacoes = tk.Toplevel()
         self.janelaacoes.title("Ações STOP.LO")
         self.janelaacoes.geometry("400x300")
         self.janelaacoes.configure(bg = "white")
+       
+       
+       
+       
+       
+    def iniciar(self):
+        self.janelaacoes.mainloop()
