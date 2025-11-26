@@ -65,6 +65,3 @@ if __name__ == "__main__":
     app.iniciar()        
 
 
-if __name__ == "__main__":
-    app = Menu_Principal()
-    app.iniciar() 

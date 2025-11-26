@@ -3,8 +3,6 @@ from tkinter import *
 import tkinter as tk
 
 
-
-
 class Stocks:
     """atributos da classe moedas"""
     
@@ -12,8 +10,35 @@ class Stocks:
        
         self.janelaacoes = tk.Toplevel()
         self.janelaacoes.title("Stocks STOP.LO")
-        self.janelaacoes.geometry("400x300")
+        self.janelaacoes.geometry("1428x800")
         self.janelaacoes.configure(bg = "white")
+        self.criar_botoes_label()
+        
+        
+        
+    def criar_botoes_label(self):
+       
+       
+        tk.Label(self.janelaacoes, text= "PAINEL DE DECISÂO DO INVESTIDOR" , bg= "white", font= ("Roboto",16,"bold"), padx=80).grid(row=0, column=1, padx=11, pady=5)
+        frame =  tk.Frame(self.janelaacoes, height=2, width=1400, bg="black")
+        frame.grid(row=1, column=0, columnspan=3, pady=10)
+        tk.Label(frame, text= f"Cotaçao TESLA hoje: {self.cotacao_ativos()} ", bg= "white", font= ("Roboto",16,"bold"), padx=80).grid(row=1, column=0, padx=11, pady=5)
+        tk.Label(frame, text= f"Cotaçao IBM hoje: {self.cotacao_ativos()} ", bg= "white", font= ("Roboto",16,"bold"), padx=80).grid(row=1, column=1, padx=11, pady=5)
+        tk.Label(frame, text= f"Cotaçao GOOGLE hoje: {self.cotacao_ativos()} ", bg= "white", font= ("Roboto",16,"bold"), padx=80).grid(row=1, column=2, padx=11, pady=5)
+        
+        botao_agendar = tk.Button(self.janelaacoes, text= "Agendar",command=self.agendar, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
+        botao_agendar.grid(row=2, column=0, pady=20)
+        
+        
+    def agendar(self):
+        self.janelaacoes.destroy()
+        self.janelagendamento = tk.Toplevel()
+        self.janelagendamento.title("Agendamento STOP.LO")
+        self.janelagendamento.geometry("400x300")
+        self.janelagendamento.configure(bg = "white")
+        
+        
+           
         
 
     def cotacao_ativos(self): # criando uma função

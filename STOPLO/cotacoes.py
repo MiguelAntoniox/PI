@@ -1,10 +1,7 @@
 import requests    # habilitando uso do requests
 
  
-   
 """ esse  modulo esta puxando dados de moedas USD, EUR, CNY  de uma api """
-
-
 class Moedas:
     """atributos da classe moedas"""
     
