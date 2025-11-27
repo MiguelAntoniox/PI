@@ -27,7 +27,7 @@ class Login:
         if os.path.exists(caminho_imagem):
             imagem_pil = Image.open(caminho_imagem).resize((200,200), Image.Resampling.LANCZOS) 
             self.imagem = ImageTk.PhotoImage(imagem_pil)
-            label_imagem = tk.Label(self.janela, image= self.imagem, bg= "gray")
+            label_imagem = tk.Label(self.janela, image= self.imagem, bg= "white")
             label_imagem.pack(pady=(20,10))
             
         """"criando os labeis escritos, campos de entrada e botoes"""  
