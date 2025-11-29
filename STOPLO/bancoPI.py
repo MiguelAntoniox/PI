@@ -44,6 +44,7 @@ class BancoPI():
             self.criar_indices()
             self._criar_tabela_testes()
             self._criar_tabela_defeitos()
+            self.criar_Historico_moedas()
         except Error as e:
             print(f"Erro ao conectar o MySql: {e}")
     
@@ -66,6 +67,16 @@ class BancoPI():
                 senha VARCHAR(255) NOT NULL,
                 perfil VARCHAR(50) NOT NULL DEFAULT 'usuario')""")
         self.conexao.commit()
+        
+    def criar_Historico_moedas(self):
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS historico_moedas(
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                valor VARCHAR(255) UNIQUE NOT NULL,
+                data VARCHAR(255) DATETIME NOT NULL,
+                moeda VARCHAR(50) NOT NULL DEFAULT 'moeda')""")
+        self.conexao.commit()    
+        
     
     def criar_logins(self):
         self.cursor.execute(""" 
@@ -140,8 +151,7 @@ class BancoPI():
         """, (funcao, tipo, caso, entrada, esperado, obtido, status, observacoes))
         self.conexao.commit()    
                  
-            
-            
+        
     def adicionar_grupo(self, nome_grupo):
         try:
             self.cursor.execute("INSERT INTO grupos (nome) VALUES (%s)", (nome_grupo,))

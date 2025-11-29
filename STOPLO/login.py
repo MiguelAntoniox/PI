@@ -14,7 +14,7 @@ class Login:
     def __init__(self):
         self.janela = tk.Tk()   
         self.janela.title("Login STOP.LO")
-        self.janela.geometry("500x800")
+        self.janela.geometry("1427x800")
         self.janela.configure(bg = "white")
         self.tentativas = 0
         self.bancoPI = BancoPI()
@@ -30,9 +30,7 @@ class Login:
             label_imagem = tk.Label(self.janela, image= self.imagem, bg= "white")
             label_imagem.pack(pady=(20,10))
             
-        """"criando os labeis escritos, campos de entrada e botoes"""  
-        
-    
+          
         framao = tk.Frame(self.janela, bg= "white")
         framao.pack(pady=10)
           

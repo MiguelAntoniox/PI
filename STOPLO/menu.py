@@ -11,7 +11,7 @@ class Menu_Principal:
     def __init__(self):
         self.janelamenu = tk.Tk()
         self.janelamenu.title("Menu STOP.LO")
-        self.janelamenu.geometry("1428x800")
+        self.janelamenu.geometry("1427x800")
         self.janelamenu.configure(bg="white")
         self.icone()
         self.criar_botoes()
