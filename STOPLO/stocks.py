@@ -1,3 +1,4 @@
+from tkinter import messagebox
 import requests    # habilitando uso do requests
 from tkinter import *
 import tkinter as tk
@@ -13,8 +14,8 @@ ticker_google = "GOOGL"
 class Stocks:
     """atributos da classe moedas"""
     
-    def __init__(self):
-       
+    def __init__(self, usuario_id):
+        self.usuario_id = usuario_id
         self.janelaacoes = tk.Toplevel()
         self.janelaacoes.title("Stocks STOP.LO")
         self.janelaacoes.geometry("1300x800")
@@ -99,16 +100,30 @@ class Stocks:
         
         botao_salvar = tk.Button(framao, text= "Salvar ordem", command=self.enviarordem, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
         botao_salvar.pack(pady=30)
-       
-  
-        
+
+
+    def salvar_agendamento_banco(self):
+        acao = self.campo_acao.get()
+        quantidade = self.campo_quantidade.get()
+        valor = self.campo_valor.get()
+        banco = BancoPI()
+        cursor = banco.conexao.cursor()
+
+        comando_sql = "INSERT INTO historico_agendamentos (usuario_id,acao, quantidade, valor) VALUES (%s, %s, %s, %s)"
+        valores = (self.usuario_id, acao, quantidade, valor)
+        cursor.execute(comando_sql, valores)
+        banco.conexao.commit()
+        cursor.close()
+        print(f"Agendamento salvo ID : {self.id_usuario}.")
+
     def enviarordem(self):
         acao = self.campo_acao.get()
         quantidade = self.campo_quantidade.get()
         valor = self.campo_valor.get()
-        
-        print(f"Ordem de Compra Salva:\n Ação: {acao}\n Quantidade: {quantidade}\n Valor: {valor}")      
-        
+
+        print(f"Ordem de Compra Salva:\n Ação: {acao}\n Quantidade: {quantidade}\n Valor: {valor}")
+        messagebox.showinfo("Ordem Salva", "Sua ordem de compra foi salva com sucesso!")
+        self.salvar_agendamento_banco()
 
     def cotacao_ativos(self, ticker):
         url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={ticker}&apikey=A7M18SXMV2MEY9BO"
@@ -157,10 +172,10 @@ if __name__ == "__main__":
     app = Stocks()
     app.iniciar()            
 
-    
-        
-            
 
-                                 
+
+
+
+
 
 

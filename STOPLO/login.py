@@ -12,7 +12,7 @@ from PIL import Image, ImageTk
 
 class Login:
     def __init__(self):
-        self.janela = tk.Tk()   
+        self.janela = tk.Tk()  
         self.janela.title("Login STOP.LO")
         self.janela.geometry("1427x800")
         self.janela.configure(bg = "white")
@@ -50,7 +50,7 @@ class Login:
         botao_cadastrar.pack(pady=30)
         
         
-     
+      
     def icone(self):
         
         caminho = os.path.join(os.path.dirname(__file__), "money.ico")
@@ -61,8 +61,8 @@ class Login:
         
         usuario = self.campo_usuario.get().strip()
         senha = self.campo_senha.get().strip()
-       
-    
+        
+        
         if not usuario and not senha:
             self.erro_login("preencha todos os campos")
             return
@@ -73,13 +73,21 @@ class Login:
             self.erro_login("preencha a senha")
             return
         
-        if self.bancoPI.validar_credenciais(usuario,senha):
-            self.bancoPI.registrar_login(usuario)
-            self.janela.withdraw()
-            menu = Menu_Principal()
-            menu.iniciar()
+        if self.bancoPI.validar_credenciais(usuario, senha):
             
-
+            
+            usuario_id = self.bancoPI.obter_id_usuario(usuario) 
+            
+            if usuario_id is not None:
+                self.bancoPI.registrar_login(usuario)
+                self.janela.withdraw()
+                
+                
+                menu = Menu_Principal(usuario_id=usuario_id) 
+                menu.iniciar()
+            else:
+                messagebox.showerror("Erro", "Falha ao obter o ID do usuário após o login.", parent=self.janela)
+            
         else:
             self.erro_login("Usuario ou senha errados")
             
@@ -90,8 +98,8 @@ class Login:
             messagebox.showerror("Erro","a tentativa esta incorreta")
             self.tentativas= 0
         else:
-            messagebox.showerror("Erro", mensagem)        
-                      
+            messagebox.showerror("Erro", mensagem)      
+                    
     def tela_cadastro(self):
         
         cadastro = Toplevel(self.janela)
@@ -112,67 +120,67 @@ class Login:
         senha_novousuario.pack(padx=20)
         
         def salvar_usuario():
-             novousuario =  login_novousuario.get()
-             novasenha = senha_novousuario.get()
-             
-             if not novousuario or not novasenha:
-                 messagebox.showerror("erro", "Preencha usuario ou senha", parent = cadastro)
-                 return
-             
-             def validarusuario(usuario):
-                 tem_arroba = "@" in usuario
-                 tem_br = usuario.endswith(".com.br")
-                 if not tem_arroba or not tem_br:
-                     return False, "Usuario precisa ter @ e .com "   
-                 return True, ""
-             
-             def validarsenha(senha):
-                 if len(senha) < 8:
-                     return False, "a senha tem que ter mais de 8 caracteres" 
-                 
-                 tem_maiuscula = False
-                 for caractere in senha:
-                     if caractere.isupper():
-                         tem_maiuscula = True
-                         break
-                 if not tem_maiuscula:
-                     return False, "A senha deve ter pelo menos uma letra maiúscula."
-                 
-                 tem_numero = False
-                 for caractere in senha:
-                     if caractere.isdigit():
-                         tem_numero = True
-                         break
-                 if not tem_numero:
-                     return False, "A senha deve ter pelo menos um número."
-                 
-                 caracteres_especiais = "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~"
-                 tem_especial = False
-                 for caractere in senha:
-                     if caractere in caracteres_especiais:
-                         tem_especial = True
-                         break
-                 if not tem_especial:
-                     return False, "A senha deve ter pelo menos um caractere especial."
-                 
-                 return True, ""
+            novousuario =  login_novousuario.get()
+            novasenha = senha_novousuario.get()
+            
+            if not novousuario or not novasenha:
+                messagebox.showerror("erro", "Preencha usuario ou senha", parent = cadastro)
+                return
+            
+            def validarusuario(usuario):
+                tem_arroba = "@" in usuario
+                tem_br = usuario.endswith(".com.br")
+                if not tem_arroba or not tem_br:
+                    return False, "Usuario precisa ter @ e .com.br"   
+                return True, ""
+            
+            def validarsenha(senha):
+                if len(senha) < 8:
+                    return False, "a senha tem que ter mais de 8 caracteres" 
+                
+                tem_maiuscula = False
+                for caractere in senha:
+                    if caractere.isupper():
+                        tem_maiuscula = True
+                        break
+                if not tem_maiuscula:
+                    return False, "A senha deve ter pelo menos uma letra maiúscula."
+                
+                tem_numero = False
+                for caractere in senha:
+                    if caractere.isdigit():
+                        tem_numero = True
+                        break
+                if not tem_numero:
+                    return False, "A senha deve ter pelo menos um número."
+                
+                caracteres_especiais = "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~"
+                tem_especial = False
+                for caractere in senha:
+                    if caractere in caracteres_especiais:
+                        tem_especial = True
+                        break
+                if not tem_especial:
+                    return False, "A senha deve ter pelo menos um caractere especial."
+                
+                return True, ""
 
-             valido, mensagem = validarusuario(novousuario)
-             if not valido:
+            valido, mensagem = validarusuario(novousuario)
+            if not valido:
                 messagebox.showerror("Erro", mensagem, parent=cadastro)
                 return
 
-             valido, mensagem = validarsenha(novasenha)
-             if not valido:
+            valido, mensagem = validarsenha(novasenha)
+            if not valido:
                 messagebox.showerror("Erro", mensagem, parent=cadastro)
                 return
             
-             try:
+            try:
                 self.bancoPI.salvar_usuario(novousuario, novasenha)
                 messagebox.showinfo("Sucesso", f"Usuario '{novousuario}' cadastrado com sucesso!")
                 cadastro.destroy()
-             except ValueError as e:
-                messagebox.showerror("Erro", str(e), parent=cadastro)                               
+            except ValueError as e:
+                messagebox.showerror("Erro", str(e), parent=cadastro)             
         
         botao = Button(cadastro, text="Salvar", command=salvar_usuario, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white" )
         botao.pack(padx=20)    
@@ -184,4 +192,4 @@ class Login:
 
 if __name__ == "__main__":
     app = Login()
-    app.iniciar()        
+    app.iniciar()

@@ -8,7 +8,8 @@ import os
 
 
 class Menu_Principal:
-    def __init__(self):
+    def __init__(self,usuario_id):
+        self.usuario_id = usuario_id
         self.janelamenu = tk.Tk()
         self.janelamenu.title("Menu STOP.LO")
         self.janelamenu.geometry("1427x800")
@@ -36,9 +37,9 @@ class Menu_Principal:
         tk.Label(frame, text= f"Cotação Yuan hoje: {moeda.cotacao_yuan()}", bg= "white", font= ("Roboto",16,"bold"), padx=80, ).grid(row=1, column=2, padx=11, pady=5)
         botao_acoes = tk.Button(self.janelamenu, text= "Stocks",command=self.cotacao, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
         botao_acoes.grid(row=2, column=0, pady=20)
-        botao_ETF = tk.Button(self.janelamenu, text= "ETF's",command=self.etf, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
+        botao_ETF = tk.Button(self.janelamenu, text= "ETF's - EM BREVE",command=self.etf, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
         botao_ETF.grid(row=2, column=1, pady=20)
-        botao_reits = tk.Button(self.janelamenu, text= "Reits",command=self.reits, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
+        botao_reits = tk.Button(self.janelamenu, text= "Reits - EM BREVE",command=self.reits, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
         botao_reits.grid(row=2, column=2, pady=20)
        
      
@@ -48,7 +49,9 @@ class Menu_Principal:
          
    
     def cotacao(self):
+        Stocks(usuario_id=self.usuario_id)
         Stocks().iniciar()
+        
 
     def etf(self):
         Etf().iniciar()

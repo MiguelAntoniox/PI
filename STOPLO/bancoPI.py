@@ -9,7 +9,7 @@ class BancoPI():
         conex = mysql.connector.connect(
             host="127.0.0.1",
             user = "root",
-            password="057213"
+            password=""
         )
         
         cursor = conex.cursor()
@@ -21,7 +21,7 @@ class BancoPI():
             conex = mysql.connector.connect(
                 host = "127.0.0.1",
                 user = "root",
-                password="057213"
+                password=""
             ) 
             cursor = conex.cursor()
             cursor.execute('CREATE DATABASE banco_PI')
@@ -32,7 +32,7 @@ class BancoPI():
             self.conexao = mysql.connector.connect(
                 host= 'localhost',
                 user = 'root',
-                password='057213',
+                password='',
                 database = 'banco_PI'
             )
             self.cursor = self.conexao.cursor()
@@ -45,18 +45,28 @@ class BancoPI():
             self._criar_tabela_testes()
             self._criar_tabela_defeitos()
             self.criar_Historico_moedas()
+            self.salva_cotacoes()
+            self.criar_historico_agendamentos()
         except Error as e:
             print(f"Erro ao conectar o MySql: {e}")
     
             raise
-        
+
+    def obter_id_usuario(self, usuario):
+        query = "SELECT id FROM usuarios WHERE usuario = %s"
+        self.cursor.execute(query, (usuario,))
+        resultado = self.cursor.fetchone()
+        if resultado:
+            return resultado[0]
+        return None
+
     def salva_cotacoes(self):
         self.cursor.execute(""" 
             CREATE TABLE IF NOT EXISTS salva_cotacao(
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                usuario_id INT NOT NULL,
+                ativo VARCHAR(255) NOT NULL,
                 data_cotacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE)""")
+                valor DECIMAL(15, 2) NOT NULL)""")
         self.conexao.commit()   
         
     def criar_usuarios(self):
@@ -72,12 +82,22 @@ class BancoPI():
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS historico_moedas(
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                valor VARCHAR(255) UNIQUE NOT NULL,
-                data VARCHAR(255) DATETIME NOT NULL,
-                moeda VARCHAR(50) NOT NULL DEFAULT 'moeda')""")
+                valor DECIMAL(15, 2) NOT NULL,
+                data DATETIME NOT NULL,
+                moeda VARCHAR(50) NOT NULL )""")
         self.conexao.commit()    
-        
-    
+
+    def criar_historico_agendamentos(self):
+        self.cursor.execute(""" 
+            CREATE TABLE IF NOT EXISTS historico_agendamentos(
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                usuario_id INT ,
+                acao VARCHAR(10) NOT NULL,
+                quantidade INT NOT NULL,
+                valor DECIMAL(15, 2) NOT NULL,
+                data_hora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)""")
+        self.conexao.commit()
+
     def criar_logins(self):
         self.cursor.execute(""" 
             CREATE TABLE IF NOT EXISTS logins(
@@ -399,8 +419,7 @@ class BancoPI():
         if hasattr(self, 'cursor') and self.cursor:
             self.cursor.close()
         if hasattr(self, 'conexao') and self.conexao:
-            self.conexao.close()    
-                        
-               
-            
-        
+            self.conexao.close()
+
+
+
