@@ -21,6 +21,7 @@ class Stocks:
         self.janelaacoes.geometry("1300x800")
         self.janelaacoes.configure(bg = "white")
         self.criar_botoes_label()
+        self.icone()
         
         
     def criar_botoes_label(self):
@@ -71,8 +72,14 @@ class Stocks:
             imagem_pil = Image.open(caminho_imagem).resize((200,200), Image.Resampling.LANCZOS) 
             self.imagem_google = ImageTk.PhotoImage(imagem_pil)
             label_imagem_google = tk.Label(self.frame, image= self.imagem_google, bg= "white")
-            label_imagem_google.grid(row=3, column=2, pady=10)        
+            label_imagem_google.grid(row=3, column=2, pady=10)   
+            
+                 
+    def icone(self):
         
+        caminho = os.path.join(os.path.dirname(__file__), "money.ico")
+        if os.path.exists(caminho):
+            self.janelaacoes.iconbitmap(caminho)     
         
     def agendar(self):
         self.janelaacoes.destroy()
@@ -98,8 +105,11 @@ class Stocks:
         self.campo_valor= tk.Entry(framao, width=30,highlightthickness= 15,highlightbackground= "white")
         self.campo_valor.pack(padx=50)
         
-        botao_salvar = tk.Button(framao, text= "Salvar ordem", command=self.enviarordem, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
+        botao_salvar = tk.Button(framao, text= "Ordem de compra", command=self.enviarordem, bg = "green", font= ("Roboto",16,"bold"), padx=100, fg= "white")
         botao_salvar.pack(pady=30)
+        
+        botao_salvarvenda = tk.Button(framao, text= "Ordem de venda", command=self.enviarordem, bg = "red", font= ("Roboto",16,"bold"), padx=100, fg= "white")
+        botao_salvarvenda.pack(pady=30)
 
 
     def salvar_agendamento_banco(self):
@@ -114,7 +124,7 @@ class Stocks:
         cursor.execute(comando_sql, valores)
         banco.conexao.commit()
         cursor.close()
-        print(f"Agendamento salvo ID : {self.id_usuario}.")
+        print(f"Agendamento salvo ID : {self.usuario_id}.")
 
     def enviarordem(self):
         acao = self.campo_acao.get()

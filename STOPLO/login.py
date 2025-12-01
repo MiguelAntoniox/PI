@@ -30,7 +30,7 @@ class Login:
             label_imagem = tk.Label(self.janela, image= self.imagem, bg= "white")
             label_imagem.pack(pady=(20,10))
             
-          
+        """criando os campos de login e senha"""  
         framao = tk.Frame(self.janela, bg= "white")
         framao.pack(pady=10)
           
@@ -50,13 +50,13 @@ class Login:
         botao_cadastrar.pack(pady=30)
         
         
-      
+    """método para adicionar o ícone à janela"""  
     def icone(self):
         
         caminho = os.path.join(os.path.dirname(__file__), "money.ico")
         if os.path.exists(caminho):
             self.janela.iconbitmap(caminho) 
-        
+    """metodo para validar o login do usuario"""    
     def validarlogin(self):
         
         usuario = self.campo_usuario.get().strip()
@@ -72,10 +72,10 @@ class Login:
         elif not senha: 
             self.erro_login("preencha a senha")
             return
-        
+        """validando as credenciais do usuario no banco de dados usando o metodo validar_credenciais da classe BancoPI"""
         if self.bancoPI.validar_credenciais(usuario, senha):
             
-            
+            """tentativa fracassada de obter o ID do usuario apos o login ou talvez nao """
             usuario_id = self.bancoPI.obter_id_usuario(usuario) 
             
             if usuario_id is not None:
@@ -91,7 +91,7 @@ class Login:
         else:
             self.erro_login("Usuario ou senha errados")
             
-            
+    """metodo para mostrar mensagem de erro no login"""        
     def erro_login(self, mensagem):
         self.tentativas += 1
         if self.tentativas >= 3:

@@ -9,7 +9,7 @@ class BancoPI():
         conex = mysql.connector.connect(
             host="127.0.0.1",
             user = "root",
-            password=""
+            password="057213"
         )
         
         cursor = conex.cursor()
@@ -21,7 +21,7 @@ class BancoPI():
             conex = mysql.connector.connect(
                 host = "127.0.0.1",
                 user = "root",
-                password=""
+                password="057213"
             ) 
             cursor = conex.cursor()
             cursor.execute('CREATE DATABASE banco_PI')
@@ -32,7 +32,7 @@ class BancoPI():
             self.conexao = mysql.connector.connect(
                 host= 'localhost',
                 user = 'root',
-                password='',
+                password='057213',
                 database = 'banco_PI'
             )
             self.cursor = self.conexao.cursor()

@@ -6,7 +6,7 @@ import tkinter as tk
 from tkinter import *
 import os
 
-
+"""classe que cria o menu princpal"""
 class Menu_Principal:
     def __init__(self,usuario_id):
         self.usuario_id = usuario_id
@@ -18,13 +18,15 @@ class Menu_Principal:
         self.criar_botoes()
        
        
-             
+    """método para adicionar o ícone à janela"""        
     def icone(self):
        
         caminho = os.path.join(os.path.dirname(__file__), "money.ico")
         if os.path.exists(caminho):
             self.janelamenu.iconbitmap(caminho)
-           
+
+    """metodo para criar os botoes e labels na tela -  tambem chama funcoes para mostrar no label"""
+
     def criar_botoes(self):
        
         moeda = Moedas("Moeda")
