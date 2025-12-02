@@ -41,7 +41,6 @@ class BancoPI():
             self.criar_grupos()
             self.criar_grupos_padrao()
             self.usuario_admin()
-            self.criar_indices()
             self._criar_tabela_testes()
             self._criar_tabela_defeitos()
             self.criar_Historico_moedas()
@@ -202,26 +201,88 @@ class BancoPI():
         )
         self.conexao.commit()
 
-    def salvar_usuario(self, usuario, senha, perfil='usuário', grupo_nome=None):
+    def salvar_usuario(self, usuario, senha,perfil="usuario",grupo_nome = None):
 
-        self.cursor.execute("SELECT * FROM usuarios WHERE usuario = %s", (usuario,))
-        if self.cursor.fetchone():
-            raise ValueError("Usuário já existe.")
+        try:
 
-       
-        senha_hash = bcrypt.hashpw(senha.encode(), bcrypt.gensalt()).decode()
+            self.cursor.execute("SELECT * FROM usuarios WHERE usuario = %s", (usuario,))
+            if self.cursor.fetchone():
+                self.registrar_teste(
+                    funcao="salvar_usuario",
+                    tipo="Dinâmico",
+                    caso="Tentativa de cadastro com usuário existente",
+                    entrada=f"Usuário: {usuario}",
+                    esperado="Erro de duplicidade",
+                    obtido="Usuário já existe",
+                    status="FALHA",
+                    observacoes="Validação falhou — usuário duplicado."
+                )
+                
+                self.registrar_defeito("Bancofinal.salvar_usuario",f"Usuario: {usuario} ja existe no banco")
+                raise ValueError("Usuário já existe.")
 
-        self.cursor.execute(
-            "INSERT INTO usuarios (usuario, senha, perfil) VALUES (%s, %s, %s)",
-            (usuario, senha_hash, perfil)
-        )
-        self.conexao.commit()
+            senha_hash = bcrypt.hashpw(senha.encode(), bcrypt.gensalt()).decode()
 
+            self.cursor.execute(
+                "INSERT INTO usuarios (usuario, senha, perfil) VALUES (%s, %s, %s)",
+                (usuario, senha_hash, perfil)   
+            )
+            self.conexao.commit()
+
+            self.cursor.execute("SELECT id FROM usuarios WHERE usuario = %s", (usuario,))
+            usuario_id = self.cursor.fetchone()[0]
+            
+            if grupo_nome:
+                self.associar_usuario_grupo(usuario_id, grupo_nome)
+                
+            self.registrar_teste(
+                funcao = "Salvar usuario",
+                tipo = "Dinamico",
+                caso="Cadastrar novo usuário",
+                entrada = f"Usuario: {usuario}, Perfil: {perfil}, Grupo: {grupo_nome}",
+                esperado= "Usuário cadastrado com sucesso",
+                obtido = "Usuário cadastrado com sucesso",
+                status = "SUCESSO",
+                observacoes="Teste automático ao iniciar o sistema",
+            
+            )    
+
+        except mysql.connector.IntegrityError as e:
+            self.registrar_defeito("bancoMySQL.salvar_usuario",str(e))
+            self.registrar_teste(
+                funcao = "Salvar usuario",
+                tipo = "Dinamico",
+                caso="Erro ao cadastrar novo usuário",
+                entrada = f"Usuario: {usuario}",
+                esperado= "Usuário cadastrado com sucesso",
+                obtido = f"Erro ao cadastrar usuário: {e}",
+                status = "FALHA",
+                observacoes="Teste automático ao iniciar o sistema",
+                
+            )
+            raise
+
+        except Exception as e:
+            self.registrar_defeito("bancoMySQL.salvar_usuario",str(e))
+            self.registrar_teste(
+                funcao = "Salvar usuario",
+                tipo = "Dinamico",
+                caso="Erro inesperado ao cadastrar novo usuário",
+                entrada = f"Usuario: {usuario}",
+                esperado= "Usuário cadastrado com sucesso",
+                obtido = f"Erro ao cadastrar usuário: {e}",
+                status = "FALHA",
+                observacoes="Teste automático ao iniciar o sistema",
+               
+            )
+            raise
+        
+    def registrar_login(self, usuario):
         self.cursor.execute("SELECT id FROM usuarios WHERE usuario = %s", (usuario,))
-        usuario_id = self.cursor.fetchone()[0]
-
-        if grupo_nome:
-            self.associar_usuario_grupo(usuario_id, grupo_nome)
+        usuario_id = self.cursor.fetchone()
+        if usuario_id:
+            self.cursor.execute("INSERT INTO logins (usuario_id) VALUES (%s)", (usuario_id[0],))
+            self.conexao.commit()    
 
     def validar_credenciais(self, usuario, senha):
         query = "SELECT senha FROM usuarios WHERE usuario = %s"
@@ -231,8 +292,7 @@ class BancoPI():
             senha_hash = resultado[0]
             return bcrypt.checkpw(senha.encode(), senha_hash.encode())
         return False
-    
-    
+
     def verificar_integridade(self):
     
         tabelas_necessarias = [
@@ -287,15 +347,6 @@ class BancoPI():
                 esperado="Usuário admin existente",
                 obtido="Usuário admin presente",
                 status="SUCESSO")
-    
-    
-
-    def registrar_login(self, usuario):
-        self.cursor.execute("SELECT id FROM usuarios WHERE usuario = %s", (usuario,))
-        usuario_id = self.cursor.fetchone()
-        if usuario_id:
-            self.cursor.execute("INSERT INTO logins (usuario_id) VALUES (%s)", (usuario_id[0],))
-            self.conexao.commit()
 
     def usuario_admin(self):
         self.cursor.execute("SELECT COUNT(*) FROM usuarios WHERE usuario = %s", ("admin",))
@@ -356,12 +407,12 @@ class BancoPI():
                 self.associar_usuario_grupo(usuario_id, grupo_nome)
 
         self.conexao.commit()
-    def criar_indices(self):
-        self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_usuarios_perfil ON usuarios(perfil)")
-        self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_logins_data_hora ON logins(data_hora)")
-        self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_usuario_grupo_usuario_id ON usuario_grupo(usuario_id)")
-        self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_usuario_grupo_grupo_id ON usuario_grupo(grupo_id)")
-        self.conexao.commit()
+    # def criar_indices(self):
+    #     self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_usuarios_perfil ON usuarios(perfil)")
+    #     self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_logins_data_hora ON logins(data_hora)")
+    #     self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_usuario_grupo_usuario_id ON usuario_grupo(usuario_id)")
+    #     self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_usuario_grupo_grupo_id ON usuario_grupo(grupo_id)")
+    #     self.conexao.commit()
 
 
     def obter_usuarios_com_grupos_inner_join(self):

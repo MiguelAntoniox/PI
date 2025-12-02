@@ -6,6 +6,7 @@ from menu import Menu_Principal
 from bancoPI import BancoPI
 from tkinter import *
 from PIL import Image, ImageTk
+from editor_usuarios import EditorUsuarios
 
 
 """"classe que constroi a janela"""
@@ -20,9 +21,8 @@ class Login:
         self.bancoPI = BancoPI()
         self.icone()
         
-        
+    
         """" pra por o gif na tela"""
-        
         caminho_imagem = os.path.join(os.path.dirname(__file__), "logo.png")
         if os.path.exists(caminho_imagem):
             imagem_pil = Image.open(caminho_imagem).resize((200,200), Image.Resampling.LANCZOS) 
@@ -91,15 +91,17 @@ class Login:
         else:
             self.erro_login("Usuario ou senha errados")
             
-    """metodo para mostrar mensagem de erro no login"""        
+    """metodo para mostrar mensagem de erro no login"""     
     def erro_login(self, mensagem):
         self.tentativas += 1
         if self.tentativas >= 3:
             messagebox.showerror("Erro","a tentativa esta incorreta")
             self.tentativas= 0
         else:
-            messagebox.showerror("Erro", mensagem)      
-                    
+            messagebox.showerror("Erro", mensagem)    
+              
+    
+                        
     def tela_cadastro(self):
         
         cadastro = Toplevel(self.janela)
@@ -112,16 +114,21 @@ class Login:
             self.janela.iconbitmap(caminho)
             
         Label(cadastro, text= "Usuario ", bg= "white", font= ("Roboto",16,"bold"), padx=50).pack(pady=(20, 10))
-        login_novousuario = Entry(cadastro,width=65, highlightthickness= 15,highlightbackground= "white")
-        login_novousuario.pack(padx=20)
+        self.login_novousuario = Entry(cadastro,width=65, highlightthickness= 15,highlightbackground= "white")
+        self.login_novousuario.pack(padx=20)
     
         Label(cadastro, text= "Senha:", bg= "white", font= ("Roboto",16,"bold"), padx=50).pack(pady=(20, 10))
-        senha_novousuario = Entry(cadastro,width=65,highlightthickness= 15,highlightbackground= "white", show="$")
-        senha_novousuario.pack(padx=20)
+        self.senha_novousuario = Entry(cadastro,width=65,highlightthickness= 15,highlightbackground= "white", show="$")
+        self.senha_novousuario.pack(padx=20)
+    
+        def abrir_editor():
+            cadastro.destroy()
+            app = EditorUsuarios()
+            app.iniciar()
         
         def salvar_usuario():
-            novousuario =  login_novousuario.get()
-            novasenha = senha_novousuario.get()
+            novousuario = self. login_novousuario.get()
+            novasenha = self.senha_novousuario.get()
             
             if not novousuario or not novasenha:
                 messagebox.showerror("erro", "Preencha usuario ou senha", parent = cadastro)
@@ -133,6 +140,7 @@ class Login:
                 if not tem_arroba or not tem_br:
                     return False, "Usuario precisa ter @ e .com.br"   
                 return True, ""
+            
             
             def validarsenha(senha):
                 if len(senha) < 8:
@@ -181,11 +189,15 @@ class Login:
                 cadastro.destroy()
             except ValueError as e:
                 messagebox.showerror("Erro", str(e), parent=cadastro)             
+    
         
         botao = Button(cadastro, text="Salvar", command=salvar_usuario, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white" )
-        botao.pack(padx=20)    
-            
-            
+        botao.pack(padx=20, pady=20)  
+        
+        botaoeditar = Button(cadastro, text="Editar", command=abrir_editor, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white" )
+        botaoeditar.pack(padx=40, pady=40)  
+        
+        
     def iniciar(self):
         self.janela.mainloop()
 
