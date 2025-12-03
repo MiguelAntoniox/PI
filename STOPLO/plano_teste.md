@@ -10,6 +10,8 @@ PLANO DE TESTE PI
    - Cadastro de novos usuários.
    - Criação automática do usuário 'admin'.
    - Registro de logins.
+   - Registro de defeitos do sistema
+   - Registro de testes do sistema
 
 3. Tipos de teste:
    - Testes estáticos: revisão de código e requisitos.
