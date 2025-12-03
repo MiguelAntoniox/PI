@@ -55,7 +55,8 @@ class Login:
         
         caminho = os.path.join(os.path.dirname(__file__), "money.ico")
         if os.path.exists(caminho):
-            self.janela.iconbitmap(caminho) 
+            self.janela.iconbitmap(caminho)
+             
     """metodo para validar o login do usuario"""    
     def validarlogin(self):
         
