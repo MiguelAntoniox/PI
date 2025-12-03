@@ -2,6 +2,7 @@ import bcrypt
 import mysql.connector
 from mysql.connector import Error
 
+"""classe para conectar e manipular o banco de dados MySQL  - criadno o banco e as tabelas caso nao existam"""
 class BancoPI():
     
     def __init__(self):
@@ -50,7 +51,8 @@ class BancoPI():
             print(f"Erro ao conectar o MySql: {e}")
     
             raise
-
+     
+    """funcao que descobre o ID do usuario"""        
     def obter_id_usuario(self, usuario):
         query = "SELECT id FROM usuarios WHERE usuario = %s"
         self.cursor.execute(query, (usuario,))
@@ -59,6 +61,7 @@ class BancoPI():
             return resultado[0]
         return None
 
+    """metodo que cria a tabela de salva cotacoes no banco de dados"""
     def salva_cotacoes(self):
         self.cursor.execute(""" 
             CREATE TABLE IF NOT EXISTS salva_cotacao(
@@ -68,6 +71,7 @@ class BancoPI():
                 valor DECIMAL(15, 2) NOT NULL)""")
         self.conexao.commit()   
         
+    """metodo que cria a tabela de usuarios no banco de dados"""    
     def criar_usuarios(self):
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS usuarios(
@@ -77,6 +81,7 @@ class BancoPI():
                 perfil VARCHAR(50) NOT NULL DEFAULT 'usuario')""")
         self.conexao.commit()
         
+    """metodo que cria a tabela de historico de moedas no banco de dados"""    
     def criar_Historico_moedas(self):
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS historico_moedas(
@@ -86,6 +91,7 @@ class BancoPI():
                 moeda VARCHAR(50) NOT NULL )""")
         self.conexao.commit()    
 
+    """metodo que cria a tabela de historico de agendamentos no banco de dados"""
     def criar_historico_agendamentos(self):
         self.cursor.execute(""" 
             CREATE TABLE IF NOT EXISTS historico_agendamentos(
@@ -96,7 +102,8 @@ class BancoPI():
                 valor DECIMAL(15, 2) NOT NULL,
                 data_hora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)""")
         self.conexao.commit()
-
+        
+    """metodo que cria a tabela de logins no banco de dados"""
     def criar_logins(self):
         self.cursor.execute(""" 
             CREATE TABLE IF NOT EXISTS logins(
@@ -106,6 +113,7 @@ class BancoPI():
                 FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE)""")
         self.conexao.commit()
         
+    """metodo que cria a tabela de grupos e usuario_grupo no banco de dados"""    
     def criar_grupos(self):
         self.cursor.execute(""" 
             CREATE TABLE IF NOT EXISTS grupos(
@@ -120,12 +128,15 @@ class BancoPI():
                 FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
                 FOREIGN KEY (grupo_id) REFERENCES grupos(id) ON DELETE CASCADE)""")
         self.conexao.commit()
+        
+    """metodo que cria os grupos padrao no banco de dados"""    
     def criar_grupos_padrao(self):
         setores = ["Usuario", "Administrador"]
         for grupo in setores :
             self.adicionar_grupo(grupo)
             
-            
+    
+    """metodo que cria a tabela de testes no banco de dados"""        
     def _criar_tabela_testes(self):
        
         self.cursor.execute("""
@@ -143,7 +154,8 @@ class BancoPI():
             )
         """)
         self.conexao.commit()   
-        
+    
+    """metodo que cria a tabela de defeitos no banco de dados"""    
     def _criar_tabela_defeitos(self):
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS defeitos (
@@ -155,13 +167,14 @@ class BancoPI():
         """)
         self.conexao.commit()    
         
-        
+    """metodo que registra defeitos no banco de dados"""    
     def registrar_defeito(self, modulo, descricao):
         self.cursor.execute("""
             INSERT INTO defeitos (modulo, descricao) VALUES (%s, %s)
         """, (modulo, descricao))
         self.conexao.commit() 
-        
+     
+    """metodo que registra testes no banco de dados"""   
     def registrar_teste(self, funcao, tipo, caso, entrada, esperado, obtido, status, observacoes=""):
         self.cursor.execute("""
             INSERT INTO testes_sistema
@@ -170,14 +183,15 @@ class BancoPI():
         """, (funcao, tipo, caso, entrada, esperado, obtido, status, observacoes))
         self.conexao.commit()    
                  
-        
+    """metodo que adiciona grupos no banco de dados"""    
     def adicionar_grupo(self, nome_grupo):
         try:
             self.cursor.execute("INSERT INTO grupos (nome) VALUES (%s)", (nome_grupo,))
             self.conexao.commit()
         except mysql.connector.IntegrityError:
-            pass         
-        
+            pass    
+             
+    """"metodo que associa usuario a grupos no banco de dados"""    
     def associar_usuario_grupo(self, usuario_id, grupo_nome):
         self.cursor.execute("SELECT id FROM grupos WHERE nome = %s", (grupo_nome,))
         grupo = self.cursor.fetchone()
@@ -201,6 +215,7 @@ class BancoPI():
         )
         self.conexao.commit()
 
+    """metod o que salva usuario no banco de dados  e registra testes e defeitos"""
     def salvar_usuario(self, usuario, senha,perfil="usuario",grupo_nome = None):
 
         try:
@@ -277,13 +292,15 @@ class BancoPI():
             )
             raise
         
+    """metodo que registra login no banco de dados"""        
     def registrar_login(self, usuario):
         self.cursor.execute("SELECT id FROM usuarios WHERE usuario = %s", (usuario,))
         usuario_id = self.cursor.fetchone()
         if usuario_id:
             self.cursor.execute("INSERT INTO logins (usuario_id) VALUES (%s)", (usuario_id[0],))
-            self.conexao.commit()    
-
+            self.conexao.commit()   
+             
+    """metodo que valida credenciais do usuario no banco de dados"""
     def validar_credenciais(self, usuario, senha):
         query = "SELECT senha FROM usuarios WHERE usuario = %s"
         self.cursor.execute(query, (usuario,))
@@ -292,7 +309,8 @@ class BancoPI():
             senha_hash = resultado[0]
             return bcrypt.checkpw(senha.encode(), senha_hash.encode())
         return False
-
+    
+    """metodo que verifica a integridade do banco de dados e registra testes e defeitos"""
     def verificar_integridade(self):
     
         tabelas_necessarias = [
@@ -348,6 +366,7 @@ class BancoPI():
                 obtido="Usuário admin presente",
                 status="SUCESSO")
 
+    """cria o usuario admin no banco de dados"""
     def usuario_admin(self):
         self.cursor.execute("SELECT COUNT(*) FROM usuarios WHERE usuario = %s", ("admin",))
         if self.cursor.fetchone()[0] == 0:
@@ -372,7 +391,7 @@ class BancoPI():
         self.cursor.execute(query, (usuario,))
         return [row[0] for row in self.cursor.fetchall()]
     
-
+    """funcao que atualiza usuario no banco de dados chamada pelo editor de usuarios"""
     def atualizar_usuario(self, usuario_antigo, novo_usuario, nova_senha=None, novo_perfil='usuário', grupos=None):
         if usuario_antigo != novo_usuario:
             self.cursor.execute("SELECT * FROM usuarios WHERE usuario = %s", (novo_usuario,))
@@ -407,14 +426,9 @@ class BancoPI():
                 self.associar_usuario_grupo(usuario_id, grupo_nome)
 
         self.conexao.commit()
-    # def criar_indices(self):
-    #     self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_usuarios_perfil ON usuarios(perfil)")
-    #     self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_logins_data_hora ON logins(data_hora)")
-    #     self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_usuario_grupo_usuario_id ON usuario_grupo(usuario_id)")
-    #     self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_usuario_grupo_grupo_id ON usuario_grupo(grupo_id)")
-    #     self.conexao.commit()
 
 
+    """metodo que obtém usuarios com grupos usando INNER JOIN no banco de dados"""
     def obter_usuarios_com_grupos_inner_join(self):
         """
         INNER JOIN: Retorna apenas os usuários que estão associados a algum grupo.
@@ -429,43 +443,7 @@ class BancoPI():
         self.cursor.execute(query)
         return self.cursor.fetchall()
 
-    def obter_todos_usuarios_com_grupos_left_join(self):
-        query = """
-            SELECT u.usuario, g.nome AS grupo
-            FROM usuarios u
-            LEFT JOIN usuario_grupo ug ON u.id = ug.usuario_id
-            LEFT JOIN grupos g ON g.id = ug.grupo_id
-        """
-        self.cursor.execute(query)
-        return self.cursor.fetchall()
-
-    def obter_todos_grupos_com_usuarios_right_join(self):
-        query = """
-            SELECT u.usuario, g.nome AS grupo
-            FROM grupos g
-            RIGHT JOIN usuario_grupo ug ON g.id = ug.grupo_id
-            RIGHT JOIN usuarios u ON u.id = ug.usuario_id
-        """
-        self.cursor.execute(query)
-        return self.cursor.fetchall()
-
-    def obter_todos_usuarios_e_grupos_full_join(self):
-    
-        query = """
-            SELECT u.usuario, g.nome AS grupo
-            FROM usuarios u
-            LEFT JOIN usuario_grupo ug ON u.id = ug.usuario_id
-            LEFT JOIN grupos g ON g.id = ug.grupo_id
-
-            UNION
-
-            SELECT u.usuario, g.nome AS grupo
-            FROM grupos g
-            LEFT JOIN usuario_grupo ug ON g.id = ug.grupo_id
-            LEFT JOIN usuarios u ON u.id = ug.usuario_id
-        """
-        self.cursor.execute(query)
-        return self.cursor.fetchall()
+   
     def __del__(self):
         if hasattr(self, 'cursor') and self.cursor:
             self.cursor.close()

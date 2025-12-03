@@ -101,7 +101,7 @@ class Login:
             messagebox.showerror("Erro", mensagem)    
               
     
-                        
+    """metodo para abrir a tela de cadastro de usuario e salvar cadastro no banco de dados apos as validações"""                    
     def tela_cadastro(self):
         
         cadastro = Toplevel(self.janela)
@@ -190,7 +190,7 @@ class Login:
             except ValueError as e:
                 messagebox.showerror("Erro", str(e), parent=cadastro)             
     
-        
+        """criando o botao salvar e editar na tela de cadastro"""
         botao = Button(cadastro, text="Salvar", command=salvar_usuario, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white" )
         botao.pack(padx=20, pady=20)  
         

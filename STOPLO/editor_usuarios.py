@@ -4,19 +4,20 @@ import os
 from bancoPI import BancoPI
 import pandas as pd
 
+"""tela para editar usuarios"""
 class EditorUsuarios:
     def __init__(self, master=None, usuario=None):
         self.master = master
         self.banco = BancoPI()
         self.janela = tk.Tk(master)
         self.janela.title("Editor de usuarios")
-        self.janela.geometry("800x600")
+        self.janela.geometry("1427x800")
         self.janela.configure(bg="white")
         self.icone()
         
      
       
-       
+        """criando label e treeview para mostrar os usuarios cadastrados"""
         self.janela.protocol("WM_DELETE_WINDOW", self.fechar_janela)
 
         titulo = tk.Label(self.janela, text="Usuários Cadastrados", font=("Roboto",16,"bold"), bg="white")
@@ -31,12 +32,11 @@ class EditorUsuarios:
         self.treeview.column("Usuário", width=200)
         self.treeview.column("Perfil", width=100)
         self.treeview.pack(expand=True, fill="both", padx=10, pady=10)
-
+        
+        """chamando o metodo para carregar os usuarios"""
         self.carregar_usuarios()
 
-       # btn_cadastrar = tk.Button(self.janela, text="Cadastrar", command=self.abrir_cadastro, bg= "black", fg="white" ,font=("bold", 12))
-       # btn_cadastrar.pack(side="left", padx=10, pady=10)
-
+        """criando botoes para excluir ,atualizar e gerar excel de usuarios"""
         btn_excluir = tk.Button(self.janela, text="Excluir", command=self.excluir_usuario, bg= "black", fg="white" ,font=("bold", 12))
         btn_excluir.pack(side="left", padx=10, pady=10)
 
@@ -48,16 +48,19 @@ class EditorUsuarios:
 
         self.usuario_selecionado = None
 
+        """defininido eventos do treeview 1 clique seleciona e 2 abre a atualizaçao do usuario"""
         self.treeview.bind("<ButtonRelease-1>", self.on_treeview_select) 
         self.treeview.bind("<Double-1>", self.on_double_click)
-        
+    
+    
+    """método para adicionar o ícone à janela"""    
     def icone(self):
         
         caminho = os.path.join(os.path.dirname(__file__), "money.ico")
         if os.path.exists(caminho):
             self.janela.iconbitmap(caminho) 
     
- 
+    """metodo para gerar o excel dos usuarios cadastrados usadno pandas"""
     def gerarexcel(self):
         try:
         
@@ -83,6 +86,8 @@ class EditorUsuarios:
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao gerar o arquivo Excel: {e}")      
 
+    
+    """esses dois metodos sao para selecionar o usuario no treeview e abrir a janela de ediçao com 2 cliques junto com a linha 51"""
     def on_treeview_select(self, event):
         selecionado = self.treeview.selection()  
         if selecionado:
@@ -99,7 +104,7 @@ class EditorUsuarios:
             item_selecionado = selecionado[0]
             self.usuario_selecionado = self.treeview.item(item_selecionado)["values"]
             self.abrir_edicao()
-
+    """metodo para carregar os usuarios cadastrados no treeview que foi criado na linha 29"""
     def carregar_usuarios(self):
         try:
             for item in self.treeview.get_children():
@@ -117,6 +122,7 @@ class EditorUsuarios:
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao carregar os usuários: {e}")
 
+    """metodo para excluir o usuario selecionado no treeview"""
     def excluir_usuario(self):
         selecionado = self.treeview.selection()
         if not selecionado:
@@ -152,7 +158,7 @@ class EditorUsuarios:
                 messagebox.showerror("Erro", f"Erro ao excluir o usuário: {e}")
             finally:
                 self.carregar_usuarios()
-
+    """funcao cria a tela de ediçao do usuario selecionado no treeview"""
     def abrir_edicao(self):
         if not self.usuario_selecionado:
             messagebox.showwarning("Aviso", "Selecione um usuário para editar.")
@@ -190,37 +196,7 @@ class EditorUsuarios:
         tk.Label(edicao, text="Perfil:", bg="white").pack(pady=(10, 5))
         tk.OptionMenu(edicao, perfil_var, *perfis).pack(padx=20)
 
-        # tk.Label(edicao, text="Grupos:", bg="white").pack(pady=(10, 5))
-
-        # grupos_disponiveis = []
-        # try:
-        #     self.banco.cursor.execute("SELECT nome FROM permissoes")
-        #     grupos_disponiveis = [row[0] for row in self.banco.cursor.fetchall()]
-        # except Exception as e:
-        #     messagebox.showerror("Erro", f"Erro ao carregar grupos: {e}")
-
-        # grupos_usuario = []
-        # try:
-        #     query_grupos_user = """
-        #         SELECT g.nome FROM permissoes g
-        #         JOIN usuario_grupo ug ON g.id = ug.grupo_id
-        #         JOIN usuarios u ON ug.usuario_id = u.id
-        #         WHERE u.usuario = %s
-        #     """
-        #     self.banco.cursor.execute(query_grupos_user, (usuario,))
-        #     grupos_usuario = [row[0] for row in self.banco.cursor.fetchall()]
-        # except Exception as e:
-        #     messagebox.showerror("Erro", f"Erro ao carregar grupos do usuário: {e}")
-
-        # listbox_grupos = tk.Listbox(edicao, selectmode=tk.MULTIPLE, height=6)
-        # for grupo in grupos_disponiveis:
-        #     listbox_grupos.insert(tk.END, grupo)
-        # listbox_grupos.pack(padx=20, pady=(0, 10), fill="x")
-
-        # for i, grupo in enumerate(grupos_disponiveis):
-        #     if grupo in grupos_usuario:
-        #         listbox_grupos.selection_set(i)
-
+        """metodo para salvar a atualizaçao do usuario"""
         def salvar_edicao():
             novo_usuario = entrada_usuario.get().strip()
             nova_senha = entrada_senha.get().strip()
@@ -231,8 +207,6 @@ class EditorUsuarios:
                 return
 
             try:
-                #indices_selecionados = listbox_grupos.curselection()
-                #grupos_selecionados = [listbox_grupos.get(i) for i in indices_selecionados]
 
                 self.banco.atualizar_usuario(usuario, novo_usuario, nova_senha if nova_senha else None, perfil_novo,)
 
@@ -244,6 +218,8 @@ class EditorUsuarios:
                 messagebox.showerror("Erro", f"Erro ao atualizar os dados do usuário: {e}")
 
         tk.Button(edicao, text="Salvar", command=salvar_edicao, bg="black", fg="white").pack(pady=20)
+        
+    """metodo para abrir a tela de cadastro de novo usuario pela tela de ediçao"""    
     def abrir_cadastro(self):
         cadastro = tk.Toplevel(self.janela)
         cadastro.title("Cadastrar Usuário")
@@ -284,6 +260,7 @@ class EditorUsuarios:
             listbox_grupos.insert(tk.END, grupo)
         listbox_grupos.pack(padx=20, pady=(0, 10), fill="x")
 
+        """metodo para salvar o novo usuario - validaçoes inclusas e salvando no banco apos validacoes"""
         def salvar_usuario():
             novo_usuario = entrada_novo_usuario.get().strip()
             nova_senha = entrada_nova_senha.get().strip()

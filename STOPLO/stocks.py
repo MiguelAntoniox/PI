@@ -6,7 +6,7 @@ import os
 from PIL import Image, ImageTk
 from bancoPI import BancoPI
 
-
+"""definindo os tickers das ações"""
 ticker_tesla = "TSLA"
 ticker_ibm = "IBM"
 ticker_google = "GOOGL"
@@ -23,7 +23,7 @@ class Stocks:
         self.criar_botoes_label()
         self.icone()
         
-        
+    """método para criar os botões e labels na tela - também chama funções para mostrar no label"""    
     def criar_botoes_label(self):
        
        
@@ -38,21 +38,18 @@ class Stocks:
         preco_ibm = self.cotacao_ativos(ticker_ibm)
         preco_google = self.cotacao_ativos(ticker_google)
 
-        tk.Label(self.janelaacoes, text= "Stocks" , bg= "white", font= ("Roboto",16,"bold"), padx=80).grid(row=0, column=1, padx=11, pady=5)
+        tk.Label(self.janelaacoes, text= "Stocks" , bg= "white", font= ("Roboto",16,"bold"), padx=80).grid(row=0, column=2, padx=11, pady=5)
         
        
         self.frame = tk.Frame(self.janelaacoes, bg="white")
-        self.frame.grid(row=1, column=0, columnspan=3, pady=10)
+        self.frame.grid(row=1, column=1, columnspan=3, pady=10)
         
         
-        tk.Label(self.frame, text= f"{ticker_google}: {formatar_preco(preco_tesla)} ", bg= "white", font= ("Roboto",16,"bold"), padx=80).grid(row=1, column=0, padx=11, pady=5)
+        tk.Label(self.frame, text= f"{ticker_tesla}: {formatar_preco(preco_tesla)} ", bg= "white", font= ("Roboto",16,"bold"), padx=80).grid(row=1, column=0, padx=11, pady=5)
         tk.Label(self.frame, text= f"{ticker_ibm}: {formatar_preco(preco_ibm)} ", bg= "white", font= ("Roboto",16,"bold"), padx=80).grid(row=1, column=1, padx=11, pady=5)
         tk.Label(self.frame, text= f"{ticker_google}: {formatar_preco(preco_google)} ", bg= "white", font= ("Roboto",16,"bold"), padx=80).grid(row=1, column=2, padx=11, pady=5)
         
-        botao_agendar = tk.Button(self.janelaacoes, text= "Configurar ordem ",command=self.agendar, bg = "black", font= ("Roboto",16,"bold"), padx=100, fg= "white")
-        botao_agendar.grid(row=2, column=0, columnspan=3, pady=20) 
-        
-    
+        """chamando as imagens para aparecer na tela"""
         caminho_imagem = os.path.join(os.path.dirname(__file__), "tesla.png")
         if os.path.exists(caminho_imagem):
             imagem_pil = Image.open(caminho_imagem).resize((200,200), Image.Resampling.LANCZOS) 
@@ -73,45 +70,37 @@ class Stocks:
             self.imagem_google = ImageTk.PhotoImage(imagem_pil)
             label_imagem_google = tk.Label(self.frame, image= self.imagem_google, bg= "white")
             label_imagem_google.grid(row=3, column=2, pady=10)   
-            
-                 
+        self.agendar()    
+    """criando o método para adicionar o ícone à janela"""             
     def icone(self):
         
         caminho = os.path.join(os.path.dirname(__file__), "money.ico")
         if os.path.exists(caminho):
-            self.janelaacoes.iconbitmap(caminho)     
-        
+            self.janelaacoes.iconbitmap(caminho) 
+                
+    """método para criar a estrtura para agendar ordens de compra e venda"""    
     def agendar(self):
-        self.janelaacoes.destroy()
-        self.janelagendamento = tk.Toplevel()
-        self.janelagendamento.title("Agendamento STOP.LO")
-        self.janelagendamento.geometry("1427x800")
-        self.janelagendamento.configure(bg = "white")
-       
         
-        framao = tk.Frame(self.janelagendamento, bg= "white")
-        framao.pack(pady=30)
-        
-        tk.Label(framao, text= "Qual ação deseja comprar ?", bg = "white", font= ("Roboto",16,"bold"),padx=50 ).pack(pady=(20, 10))
-        self.campo_acao= tk.Entry(framao,width=30, highlightthickness= 15,highlightbackground= "white")
-        self.campo_acao.pack(padx=50)
+        tk.Label(self.frame, text= "Qual ação deseja comprar ?", bg = "white", font= ("Roboto",16,"bold"),padx=50 ).grid(row=4, column=1, padx=11, pady=5)
+        self.campo_acao= tk.Entry(self.frame,width=30, highlightthickness= 15,highlightbackground= "white")
+        self.campo_acao.grid(row=5, column=1, padx=11, pady=5)
         
         
-        tk.Label(framao, text= "Quantas açoes deseja comprar ?", bg= "white", font= ("Roboto",16,"bold"),padx=50).pack(pady=(30, 10))
-        self.campo_quantidade= tk.Entry(framao, width=30,highlightthickness= 15,highlightbackground= "white")
-        self.campo_quantidade.pack(padx=50)
+        tk.Label(self.frame, text= "Quantas açoes deseja comprar ?", bg= "white", font= ("Roboto",16,"bold"),padx=50).grid(row=6, column=1, padx=11, pady=5)
+        self.campo_quantidade= tk.Entry(self.frame, width=30,highlightthickness= 15,highlightbackground= "white")
+        self.campo_quantidade.grid(row=7, column=1, padx=11, pady=5)
         
-        tk.Label(framao, text= "Qual valor de compra da ação ?", bg= "white", font= ("Roboto",16,"bold"),padx=50).pack(pady=(30, 10))
-        self.campo_valor= tk.Entry(framao, width=30,highlightthickness= 15,highlightbackground= "white")
-        self.campo_valor.pack(padx=50)
+        tk.Label(self.frame, text= "Qual valor de compra da ação ?", bg= "white", font= ("Roboto",16,"bold"),padx=50).grid(row=8, column=1, padx=11, pady=5)
+        self.campo_valor= tk.Entry(self.frame, width=30,highlightthickness= 15,highlightbackground= "white")
+        self.campo_valor.grid(row=9, column=1, padx=11, pady=5)
         
-        botao_salvar = tk.Button(framao, text= "Ordem de compra", command=self.enviarordem, bg = "green", font= ("Roboto",16,"bold"), padx=100, fg= "white")
-        botao_salvar.pack(pady=30)
+        botao_salvar = tk.Button(self.frame, text= "Ordem de compra", command=self.enviarordemcompra, bg = "green", font= ("Roboto",16,"bold"), padx=100, fg= "white")
+        botao_salvar.grid(row=10, column=1, padx=11, pady=5)
         
-        botao_salvarvenda = tk.Button(framao, text= "Ordem de venda", command=self.enviarordem, bg = "red", font= ("Roboto",16,"bold"), padx=100, fg= "white")
-        botao_salvarvenda.pack(pady=30)
+        botao_salvarvenda = tk.Button(self.frame, text= "Ordem de venda", command=self.enviarordemvenda, bg = "red", font= ("Roboto",16,"bold"), padx=100, fg= "white")
+        botao_salvarvenda.grid(row=11, column=1, padx=11, pady=5)
 
-
+    """função para salvar o agendamento no banco de dados"""
     def salvar_agendamento_banco(self):
         acao = self.campo_acao.get()
         quantidade = self.campo_quantidade.get()
@@ -125,8 +114,9 @@ class Stocks:
         banco.conexao.commit()
         cursor.close()
         print(f"Agendamento salvo ID : {self.usuario_id}.")
-
-    def enviarordem(self):
+        
+    """metodo para enviar a ordem de compra"""
+    def enviarordemcompra(self):
         acao = self.campo_acao.get()
         quantidade = self.campo_quantidade.get()
         valor = self.campo_valor.get()
@@ -134,7 +124,18 @@ class Stocks:
         print(f"Ordem de Compra Salva:\n Ação: {acao}\n Quantidade: {quantidade}\n Valor: {valor}")
         messagebox.showinfo("Ordem Salva", "Sua ordem de compra foi salva com sucesso!")
         self.salvar_agendamento_banco()
+        
+    """metodo para enviar a ordem de venda"""    
+    def enviarordemvenda(self):
+        acao = self.campo_acao.get()
+        quantidade = self.campo_quantidade.get()
+        valor = self.campo_valor.get()
 
+        print(f"Ordem de venda Salva:\n Ação: {acao}\n Quantidade: {quantidade}\n Valor: {valor}")
+        messagebox.showinfo("Ordem Salva", "Sua ordem de venda foi salva com sucesso!")
+        self.salvar_agendamento_banco()    
+        
+    """função para obter a cotação dos ativos usando a API AlphaVantage"""
     def cotacao_ativos(self, ticker):
         url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={ticker}&apikey=A7M18SXMV2MEY9BO"
         try:
