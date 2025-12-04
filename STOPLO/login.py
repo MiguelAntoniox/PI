@@ -107,7 +107,7 @@ class Login:
         
         cadastro = Toplevel(self.janela)
         cadastro.title("Cadastro de usuario")
-        cadastro.geometry("500x800")
+        cadastro.geometry("1427x800")
         cadastro.configure(bg = "white")
         
         
