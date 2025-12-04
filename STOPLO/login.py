@@ -110,6 +110,7 @@ class Login:
         cadastro.geometry("500x800")
         cadastro.configure(bg = "white")
         
+        
         caminho = os.path.join(os.path.dirname(__file__), "ico.ico")
         if os.path.exists(caminho):
             self.janela.iconbitmap(caminho)
@@ -121,7 +122,10 @@ class Login:
         Label(cadastro, text= "Senha:", bg= "white", font= ("Roboto",16,"bold"), padx=50).pack(pady=(20, 10))
         self.senha_novousuario = Entry(cadastro,width=65,highlightthickness= 15,highlightbackground= "white", show="$")
         self.senha_novousuario.pack(padx=20)
+        
+        
     
+        
         def abrir_editor():
             cadastro.destroy()
             app = EditorUsuarios()
