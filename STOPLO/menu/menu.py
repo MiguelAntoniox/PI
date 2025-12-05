@@ -1,7 +1,7 @@
-from cotacoes import Moedas
-from stocks import Stocks
-from etfs import Etf
-from reits import Reits
+from cotacoesmoeda.cotacoes import Moedas
+from ativos.stocks import Stocks
+from ativos.etfs import Etf
+from ativos.reits import Reits
 import tkinter as tk
 from tkinter import *
 import os

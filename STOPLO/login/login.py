@@ -2,11 +2,11 @@ import os
 from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import messagebox
-from menu import Menu_Principal 
-from bancoPI import BancoPI
+from STOPLO.menu.menu import Menu_Principal 
+from STOPLO.bancodedados.bancoPI import BancoPI
 from tkinter import *
 from PIL import Image, ImageTk
-from editor_usuarios import EditorUsuarios
+from STOPLO.edicaodeusuarios.editor_usuarios import EditorUsuarios
 
 
 """"classe que constroi a janela"""

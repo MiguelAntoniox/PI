@@ -4,7 +4,7 @@ from tkinter import *
 import tkinter as tk
 import os
 from PIL import Image, ImageTk
-from bancoPI import BancoPI
+from STOPLO.bancodedados.bancoPI import BancoPI
 
 """definindo os tickers das ações"""
 ticker_tesla = "TSLA"
